@@ -1,0 +1,10 @@
+Image Name,Num Markers,Prediction Zone,Confidence Threshold,PGC_prop,Stover_prop,Soil_prop
+IMG_0001.jpg,4,ROI,0.85,0.67,0.15,0.18
+IMG_0002.jpg,4,ROI,0.85,0.45,0.22,0.33
+IMG_0003.jpg,4,ROI,0.85,0.23,0.59,0.18
+IMG_0004.jpg,3,ROI,0.85,0.67,0.11,0.22
+IMG_0005.jpg,4,ROI,0.85,0.89,0.07,0.04
+IMG_0006.jpg,3,ROI,0.85,0.45,0.05,0.5
+IMG_0007.jpg,2,Whole Image,0.85,0.37,0.01,0.62
+IMG_0008.jpg,3,ROI,0.85,0.63,0.33,0.04
+IMG_0009.jpg,4,ROI,0.85,0.11,0.78,0.11
