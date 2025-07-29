@@ -1,39 +1,56 @@
 """
-src.img_utils.py
+src/image_utils.py
+Image Utility Functions
 BoMeyering 2025
 """
 
-import base64
-from PIL import Image
+import cv2
 import numpy as np
 
-def get_shape_and_dtype(file):
+def read_file_to_numpy(file):
+    """ Read a file in and output numpy array in OpenCV format """
+    file.seek(0)
+    try:
+          
+        buffer = file.read()                            # Read buffer
+        image = np.frombuffer(buffer, dtype=np.uint8)   # Create array
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR) 
 
-    image = Image.open(file)
-    image = np.array(image)
-    img_shape = list(image.shape)
-    dtype = str(image.dtype)
+        return image
+    
+    except Exception as e:
+        print(f"Error encoding image {file}: {str(e)}")
+        return None
 
-    return img_shape, dtype
+def draw_bounding_boxes(img, pts, pts_range=1024):
+    """
+    Draw bounding boxes on an image
+    """
+    if img.shape[:2] != (1024, 1024):
+        print(True)
+        h, w = img.shape[:2]
+        shape_vec = np.array([w, h]*2)
+        thickness = 10
+        pts[:, :4] = pts[:, :4] / 1024 * shape_vec
 
-def encode_image(file):
-    """ Encode an uploaded image in Base64 """
-    img_shape, dtype = get_shape_and_dtype(file)
-    buffer = file.read()
-    encoded = base64.b64encode(buffer).decode()
+    # if img.shape[:2] != (1024, 1024):
+    #     h, w = img.shape[0:2]
+    #     thickness = 10
+    else:
+        h, w = 1024, 1024
+        thickness = 3
+    
+    img_copy = img.copy()
+    for bbox in pts:
+        print(bbox)
+        pt_list = bbox[0:4].tolist()
+        print(pt_list)
+        x1, y1, x2, y2 = (int(i) for i in pt_list) 
+        cv2.rectangle(img_copy, (x1, y1), (x2, y2), (255, 100, 100), thickness)
+        
+    return img_copy
 
-    return encoded, img_shape, dtype
-
-def encode_upload_list(file_uploads):
-    """ Encode a whole list of image uploads """
-    encoded_strings = []
-    file_names = []
-    metadata = []
-
-    for file in file_uploads:
-        encoded, img_shape, dtype = encode_image(file)
-        encoded_strings.append(encoded)
-        file_names.append(file.name)
-        metadata.append((img_shape, dtype))
-
-    return encoded_strings, file_names, metadata
+def overlay_preds(img, color_mask, alpha, gamma=0.0):
+    beta = 1-alpha
+    overlay = cv2.addWeighted(img, alpha, color_mask, beta, gamma)
+    return overlay
