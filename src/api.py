@@ -5,7 +5,9 @@ BoMeyering 2025
 """
 import streamlit as st
 import requests
+from tenacity import retry, stop_after_attempt
 
+@retry(stop=stop_after_attempt(3))
 def send_request_sync(payload):
 	""" Send a synchronous request to the API """
 	try:
